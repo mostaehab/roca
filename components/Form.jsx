@@ -18,7 +18,7 @@ const Form = ({ onSubmitForm }) => {
           onSubmit={onSubmitForm}
         >
           <div className="w-[100%] lg:w-[calc(50%-10px)] mb-[40px]">
-            <label for="name">
+            <label htmlFor="name">
               <p className="text-[18px]">
                 Name*
                 <span className="inline-block text-center w-[25px] h-[25px] bg-[#B18F13] text-white rounded-full">
@@ -39,7 +39,7 @@ const Form = ({ onSubmitForm }) => {
             ></input>
           </div>
           <div className="w-[100%] lg:w-[calc(50%-10px)] mb-[40px]">
-            <label for="address">
+            <label htmlFor="address">
               <p className="text-[18px]">
                 Address*
                 <span className="inline-block text-center w-[25px] h-[25px] bg-[#B18F13] text-white rounded-full">
@@ -60,7 +60,7 @@ const Form = ({ onSubmitForm }) => {
             ></input>
           </div>
           <div className="w-[100%] lg:w-[calc(50%-10px)] mb-[60px]">
-            <label for="companyName">
+            <label htmlFor="companyName">
               <p className="text-[18px]">
                 Company's Name*
                 <span className="inline-block text-center w-[25px] h-[25px] bg-[#B18F13] text-white rounded-full">
@@ -81,7 +81,7 @@ const Form = ({ onSubmitForm }) => {
             ></input>
           </div>
           <div className="w-[100%] lg:w-[calc(50%-10px)] mb-[60px]">
-            <label for="companyNumber">
+            <label htmlFor="companyNumber">
               <p className="text-[18px]">
                 Company's Number*
                 <span className="inline-block text-center w-[25px] h-[25px] bg-[#B18F13] text-white rounded-full">
