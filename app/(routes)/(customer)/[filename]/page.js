@@ -1,19 +1,40 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
 import Header from "@/components/Header";
-import { Document, Page } from "react-pdf";
-import { pdfjs } from "react-pdf";
-
+import { modifyPdf } from "@/utils/pdfUtils";
 const page = () => {
+  const plainPdf = "https://pdf-lib.js.org/assets/with_update_sections.pdf";
+
   const canvasRef = useRef(null);
   const [drawing, setDrawing] = useState(false);
   const [base64Image, setBase64Image] = useState("");
-  const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [digitalSign, setDigitalSign] = useState("");
+  const [isClient, setIsClient] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState("");
 
-  function onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages);
-  }
+  console.log(digitalSign.signature);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    const loadPdf = async () => {
+      const imgUrl = base64Image;
+      const modifiedPdf = await modifyPdf(imgUrl, plainPdf, digitalSign);
+
+      const blob = new Blob([modifiedPdf], { type: "application/pdf" });
+
+      const url = URL.createObjectURL(blob);
+      setPdfUrl(url);
+    };
+
+    loadPdf();
+  }, [base64Image]);
+
+  const onDigitalSignature = (event) => {
+    const { value } = event.target;
+    setDigitalSign(value);
+  };
 
   const startDrawing = (event) => {
     const context = canvasRef.current.getContext("2d");
@@ -63,9 +84,12 @@ const page = () => {
         <p>File Name</p>
 
         <div className="w-[600px] h-[750px] mx-auto  rounded-xl">
-          <iframe className="w-full h-full" src="/mostafa.pdf"></iframe>
+          <iframe
+            className="w-full h-full"
+            src={pdfUrl ? pdfUrl : plainPdf}
+          ></iframe>
         </div>
-        <label for="username" className="block mt-10">
+        <label htmlFor="username" className="block mt-10">
           <p className="text-[18px]">
             Signature*
             <span className="inline-block text-center w-[25px] h-[25px] bg-[#B18F13] text-white rounded-full">
@@ -78,6 +102,8 @@ const page = () => {
           type="text"
           placeholder="Signature"
           name="signature"
+          value={digitalSign}
+          onChange={onDigitalSignature}
           id="signature"
           required
         ></input>
@@ -92,7 +118,7 @@ const page = () => {
           <canvas
             ref={canvasRef}
             height={300}
-            width={window.innerWidth * 0.9}
+            width={isClient ? window.innerWidth * 0.9 : null}
             className="border-[#DADADA] border-2 rounded-xl bg-slate-200"
             onMouseDown={startDrawing}
             onTouchStart={startDrawing}

@@ -1,11 +1,6 @@
-import { useRef, useState } from "react";
 import FileUpload from "./FileUpload";
 
 const Form = ({ onSubmitForm }) => {
-  const onRemove = () => {
-    setSelected(null);
-  };
-
   return (
     <main>
       <div className="container max-w-[90%] mx-auto py-[50px]">
@@ -68,7 +63,7 @@ const Form = ({ onSubmitForm }) => {
                 </span>
               </p>
               <span className="text-[#959595]">
-                Fill in this field with your company's name
+                Fill in this field with your company&rsquo;s name
               </span>
             </label>
             <input
