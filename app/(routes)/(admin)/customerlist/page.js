@@ -4,17 +4,18 @@ import Header from "@/components/Header";
 import FileUpload from "@/components/FileUpload";
 import { AppContext } from "@/context";
 const page = () => {
-  const [isClient, setIsClient] = useState(false);
+  const [sendMail, setSendMail] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const sendMail = (email) => {
-    if (isClient) {
-      window.location.href = `mailto:${email}`;
+    if (typeof window !== undefined && sendMail) {
+      window.location.href = `mailto:blabla`;
     }
+  }, [sendMail]);
+
+  const onSendMail = () => {
+    setSendMail(true);
   };
+
   return (
     <div>
       <Header title="Admin Portal"></Header>
@@ -54,7 +55,7 @@ const page = () => {
                 </p>
                 <button
                   className="cursor-pointer bg-[#B18F13] py-[15px] px-[40px] rounded-full text-white mt-[20px]"
-                  onClick={sendMail("mamaa")}
+                  onClick={onSendMail}
                 >
                   Request documents via email!
                 </button>

@@ -64,8 +64,6 @@ const Form = ({ setSubmitted }) => {
     }
   }, [createdCycle]);
 
-  console.log(currentCycle);
-
   return (
     <main>
       <div className="container max-w-[90%] mx-auto py-[50px]">

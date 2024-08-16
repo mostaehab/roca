@@ -1,14 +1,23 @@
+"use client";
 import { FiUploadCloud, FiFileText, FiTrash } from "react-icons/fi";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { AppContext } from "@/context";
 
 const FileUpload = ({ fileDescription, setUploaded }) => {
   const { currentCycle, fetchUploadFiles } = AppContext();
   const [selected, setSelected] = useState([]);
-
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [filesUploaded, setFilesUplaoded] = useState(false);
   const inputRef = useRef();
-  const authData = JSON.parse(localStorage.getItem("authData"));
   const currentDate = new Date();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const authData = JSON.parse(localStorage.getItem("authData"));
+      setData(authData);
+    }
+  }, []);
 
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -28,20 +37,18 @@ const FileUpload = ({ fileDescription, setUploaded }) => {
       formData.append("Id", 0);
       formData.append(`file`, file);
       formData.append("UpdatedAt", currentDate.toISOString());
-      formData.append("CreatedBy", authData.user.companyName);
+      formData.append("CreatedBy", data.user.companyName);
       formData.append("UserCycleId", currentCycle[0]?.id);
-
-      for (let [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
-
+      setLoading(true);
       try {
         const response = await fetchUploadFiles(formData);
         const data = await response.json();
-        console.log(data);
         setUploaded(true);
+        setFilesUplaoded(true);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     });
   };
@@ -92,6 +99,9 @@ const FileUpload = ({ fileDescription, setUploaded }) => {
               </div>
             </div>
           ))}
+
+        {loading && <div>Loading</div>}
+        {filesUploaded && <div>Files uploaded successfully</div>}
 
         <div>
           <input

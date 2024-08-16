@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { AppContext } from "@/context";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import FadeLoader from "react-spinners/FadeLoader";
 
 const page = () => {
@@ -13,18 +13,21 @@ const page = () => {
     password: "",
   });
   const [res, setRes] = useState("");
-  const [userData, setUserData] = useState(null);
   const [loginAttempted, setLoginAttempted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
-
   useEffect(() => {
-    if (localStorage.getItem("authData")) {
-      setUserData(localStorage.getItem("authData"));
-      router.push("/documents");
+    if (typeof window !== undefined) {
+      const userData = localStorage.getItem("authData");
+      const userRole = JSON.parse(userData)?.user?.role;
+
+      if (userRole && userRole === "System Admin") {
+        redirect("/customerlist");
+      } else if (userRole && userRole === "Client") {
+        redirect("/documents");
+      }
     }
-  }, [loginAttempted, router]);
+  }, [loginAttempted]);
 
   const onLoginDataChange = (event) => {
     const { name, value } = event.target;
