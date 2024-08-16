@@ -63,10 +63,6 @@ const page = () => {
               <div className="w-[calc(50%-30px)]">
                 <h4 className="text-[18px] mb-5">Documents to Sign</h4>
                 <FileUpload></FileUpload>
-
-                <button className="cursor-pointer bg-[#B18F13] py-[15px] px-[40px] rounded-full text-white mt-[20px]">
-                  Submit
-                </button>
               </div>
             </div>
           </div>

@@ -1,6 +1,56 @@
+"use client";
 import { RiErrorWarningLine } from "react-icons/ri";
+import { useEffect, useState } from "react";
+import { AppContext } from "@/context";
 
-const Agreement = ({ agreementHandle }) => {
+const Agreement = ({ agreementHandle, setSubmitted }) => {
+  const { fetchGetFiles, fetchGetCycle, setCurrentCycle, currentCycle } =
+    AppContext();
+  const [cycleFiles, setCycleFiles] = useState(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("authData");
+    if (userData) {
+      const getUserCycle = async () => {
+        const userId = JSON.parse(userData)?.user?.id;
+
+        try {
+          const data = await fetchGetCycle(userId);
+          setCurrentCycle(data);
+        } catch (error) {
+          console.error("Error fetching user cycle:", error);
+        }
+      };
+
+      getUserCycle();
+    }
+  }, [fetchGetCycle, setCurrentCycle]);
+
+  useEffect(() => {
+    const getCycleFiles = async () => {
+      if (currentCycle && currentCycle.length > 0) {
+        try {
+          const response = await fetchGetFiles(currentCycle[0]?.id);
+          if (!response.ok) {
+            return;
+          }
+          const data = await response.json();
+          setCycleFiles(data[0]);
+        } catch (error) {
+          console.error("Error fetching cycle files:", error);
+        }
+      }
+    };
+
+    getCycleFiles();
+  }, [currentCycle, fetchGetFiles]);
+
+  useEffect(() => {
+    if (cycleFiles) {
+      setSubmitted(true);
+    }
+  }, [cycleFiles, setSubmitted]);
+
   return (
     <main>
       <div className="container max-w-[90%] mx-auto py-[50px]">

@@ -11,13 +11,6 @@ const page = () => {
     setAgreed(!agreed);
   };
 
-  const onSubmitForm = (event) => {
-    event.preventDefault();
-    setSubmitted(true);
-  };
-
-  const sumbitMessage = () => {};
-
   return (
     <>
       <Header></Header>
@@ -25,9 +18,12 @@ const page = () => {
       {submitted ? (
         <SubmitMessage />
       ) : agreed ? (
-        <Form onSubmitForm={onSubmitForm}></Form>
+        <Form setSubmitted={setSubmitted}></Form>
       ) : (
-        <Agreement agreementHandle={agreementHandle}></Agreement>
+        <Agreement
+          agreementHandle={agreementHandle}
+          setSubmitted={setSubmitted}
+        ></Agreement>
       )}
     </>
   );

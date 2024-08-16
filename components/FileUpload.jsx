@@ -1,9 +1,14 @@
 import { FiUploadCloud, FiFileText, FiTrash } from "react-icons/fi";
 import { useState, useRef } from "react";
+import { AppContext } from "@/context";
 
-const FileUpload = () => {
+const FileUpload = ({ fileDescription, setUploaded }) => {
+  const { currentCycle, fetchUploadFiles } = AppContext();
   const [selected, setSelected] = useState([]);
+
   const inputRef = useRef();
+  const authData = JSON.parse(localStorage.getItem("authData"));
+  const currentDate = new Date();
 
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -11,19 +16,49 @@ const FileUpload = () => {
     }
   };
 
+  const onSubmitUpload = async (event) => {
+    event.preventDefault();
+
+    selected.forEach(async (file) => {
+      let formData = new FormData();
+
+      formData.append("FileName", file.name);
+      formData.append("FileDescription", fileDescription);
+      formData.append("CreatedAt", currentDate.toISOString());
+      formData.append("Id", 0);
+      formData.append(`file`, file);
+      formData.append("UpdatedAt", currentDate.toISOString());
+      formData.append("CreatedBy", authData.user.companyName);
+      formData.append("UserCycleId", currentCycle[0]?.id);
+
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
+      try {
+        const response = await fetchUploadFiles(formData);
+        const data = await response.json();
+        console.log(data);
+        setUploaded(true);
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  };
+
   const onChooseFile = () => {
     inputRef.current.click();
   };
+
+  const onSubmitClick = () => {};
 
   const onRemove = (index) => {
     setSelected(selected.filter((_, i) => i !== index));
   };
 
-  console.log(selected);
-
   return (
     <div>
-      <div>
+      <form onSubmit={onSubmitUpload}>
         <div
           onClick={onChooseFile}
           className="border-4 rounded-xl border-[#C5C5C5] border-dashed flex flex-col justify-center items-center py-5 leading-[50px] cursor-pointer"
@@ -57,7 +92,16 @@ const FileUpload = () => {
               </div>
             </div>
           ))}
-      </div>
+
+        <div>
+          <input
+            type="submit"
+            value="Upload"
+            className="cursor-pointer my-[50px] bg-[#B18F13] py-[15px] px-[40px] rounded-full text-white"
+            onClick={onSubmitClick}
+          ></input>
+        </div>
+      </form>
     </div>
   );
 };
