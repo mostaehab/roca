@@ -7,8 +7,7 @@ import { FiFileText } from "react-icons/fi";
 import { AppContext } from "@/context";
 
 const page = () => {
-  const { toBeSigned, setToBeSigned } = AppContext();
-  const { uploaded, setUploaded } = useState(null);
+  const { toBeSigned, setToBeSigned, signed } = AppContext();
 
   useEffect(() => {
     if (typeof window !== undefined) {
@@ -16,7 +15,7 @@ const page = () => {
       const files = JSON.parse(sessionFiles);
       setToBeSigned(files);
     }
-  }, []);
+  }, [signed]);
 
   return (
     <div>

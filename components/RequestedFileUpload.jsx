@@ -61,6 +61,7 @@ const RequestedFileUpload = () => {
         formData.append("CreatedBy", data.user.companyName);
         formData.append("UserCycleId", currentCycle[0].id);
         formData.append("fileTypeId", 1);
+
         setLoading(true);
         try {
           const response = await fetchUploadFiles(formData);

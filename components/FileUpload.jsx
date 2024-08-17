@@ -25,8 +25,6 @@ const FileUpload = ({ fileDescription, setUploaded }) => {
     }
   };
 
-  console.log(currentCycle);
-
   const onSubmitUpload = async (event) => {
     event.preventDefault();
 
@@ -45,6 +43,7 @@ const FileUpload = ({ fileDescription, setUploaded }) => {
       setLoading(true);
       try {
         const response = await fetchUploadFiles(formData);
+        const data = await response.json();
         setUploaded(true);
         setFilesUplaoded(true);
       } catch (error) {

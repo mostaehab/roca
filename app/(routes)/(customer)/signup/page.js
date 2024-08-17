@@ -136,7 +136,7 @@ const page = () => {
               ></input>
               <div className="mt-5">
                 {passwordError || (
-                  <span className="block text-gray-500">{passwordError}</span>
+                  <span className="block text-red-500">{passwordError}</span>
                 )}
               </div>
             </div>

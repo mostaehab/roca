@@ -7,7 +7,7 @@ import SubmitMessage from "@/components/SubmitMessage";
 import { redirect } from "next/navigation";
 import { AppContext } from "@/context";
 const page = () => {
-  const { currentCycle, fetchGetFiles, toBeSigned, setToBeSigned } =
+  const { currentCycle, fetchGetFiles, toBeSigned, setToBeSigned, signed } =
     AppContext();
   const [agreed, setAgreed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -30,7 +30,7 @@ const page = () => {
     };
 
     getCycleFiles();
-  }, [currentCycle]);
+  }, [currentCycle, signed]);
 
   useEffect(() => {
     if (cycleFiles) {

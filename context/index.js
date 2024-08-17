@@ -1,4 +1,5 @@
 "use client";
+import { error } from "pdf-lib";
 import React, { createContext, useContext, useState } from "react";
 
 const appContext = createContext();
@@ -7,6 +8,7 @@ export const ContextProvider = ({ children }) => {
   const apiUrl = process.env.NEXT_PUBLIC_ROCA_API_URL;
   const [currentCycle, setCurrentCycle] = useState(null);
   const [toBeSigned, setToBeSigned] = useState(null);
+  const [signed, setSigned] = useState(null);
 
   // Register User Request
   const onRegisterUser = async (registerUserData) => {
@@ -180,8 +182,26 @@ export const ContextProvider = ({ children }) => {
       }
 
       const data = await response.blob();
-      
+
       return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteFiles = async (fileId) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/Attachement/delete-attachment?id=${fileId}`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+
+      if (!response) {
+        return;
+      }
     } catch (error) {
       console.error(error);
     }
@@ -200,6 +220,9 @@ export const ContextProvider = ({ children }) => {
         fetchAllCycles,
         setToBeSigned,
         fetchDownlaodFile,
+        deleteFiles,
+        signed,
+        setSigned,
         toBeSigned,
         currentCycle,
       }}
