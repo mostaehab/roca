@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import FadeLoader from "react-spinners/FadeLoader";
 
 const page = () => {
-  const { fetchLoginUser } = AppContext();
+  const { fetchLoginUser, setToBeSigned } = AppContext();
   const [loginUserData, setLoginUserData] = useState({
     email: "",
     password: "",
@@ -37,6 +37,8 @@ const page = () => {
   const onUserLogin = async (event) => {
     event.preventDefault();
     setLoading(true);
+    localStorage.clear();
+    setToBeSigned(null);
     try {
       const response = await fetchLoginUser(loginUserData);
 

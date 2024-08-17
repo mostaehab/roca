@@ -36,6 +36,7 @@ const Agreement = ({ agreementHandle, setSubmitted }) => {
           }
           const data = await response.json();
           setCycleFiles(data[0]);
+          localStorage.setItem("cycleFiles", JSON.stringify(data));
         } catch (error) {
           console.error("Error fetching cycle files:", error);
         }

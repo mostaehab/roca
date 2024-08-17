@@ -3,14 +3,35 @@ import { FiUploadCloud, FiFileText, FiTrash } from "react-icons/fi";
 import { useState, useRef, useEffect } from "react";
 import { AppContext } from "@/context";
 
-const FileUpload = ({ fileDescription, setUploaded }) => {
-  const { currentCycle, fetchUploadFiles } = AppContext();
+const RequestedFileUpload = () => {
+  const { currentCycle, fetchUploadFiles, setCurrentCycle, fetchGetCycle } =
+    AppContext();
+
   const [selected, setSelected] = useState([]);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [filesUploaded, setFilesUplaoded] = useState(false);
   const inputRef = useRef();
   const currentDate = new Date();
+
+  useEffect(() => {
+    const userData = localStorage.getItem("authData");
+    if (userData) {
+      const getUserCycle = async () => {
+        const userId = JSON.parse(userData)?.user?.id;
+
+        try {
+          const data = await fetchGetCycle(userId);
+          setCurrentCycle(data);
+          console.log(data);
+        } catch (error) {
+          console.error("Error fetching user cycle:", error);
+        }
+      };
+
+      getUserCycle();
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -25,32 +46,30 @@ const FileUpload = ({ fileDescription, setUploaded }) => {
     }
   };
 
-  console.log(currentCycle);
-
   const onSubmitUpload = async (event) => {
     event.preventDefault();
 
     selected.forEach(async (file) => {
-      let formData = new FormData();
-
-      formData.append("FileName", file.name);
-      formData.append("FileDescription", fileDescription);
-      formData.append("CreatedAt", currentDate.toISOString());
-      formData.append("Id", 0);
-      formData.append(`file`, file);
-      formData.append("UpdatedAt", currentDate.toISOString());
-      formData.append("CreatedBy", data.user.companyName);
-      formData.append("UserCycleId", currentCycle[0]?.id);
-      formData.append("fileTypeId", 1);
-      setLoading(true);
-      try {
-        const response = await fetchUploadFiles(formData);
-        setUploaded(true);
-        setFilesUplaoded(true);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+      if (currentCycle) {
+        let formData = new FormData();
+        formData.append("FileName", file.name);
+        formData.append("FileDescription", "Requested File");
+        formData.append("CreatedAt", currentDate.toISOString());
+        formData.append("Id", 0);
+        formData.append(`file`, file);
+        formData.append("UpdatedAt", currentDate.toISOString());
+        formData.append("CreatedBy", data.user.companyName);
+        formData.append("UserCycleId", currentCycle[0].id);
+        formData.append("fileTypeId", 1);
+        setLoading(true);
+        try {
+          const response = await fetchUploadFiles(formData);
+          setFilesUplaoded(true);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoading(false);
+        }
       }
     });
   };
@@ -118,4 +137,4 @@ const FileUpload = ({ fileDescription, setUploaded }) => {
   );
 };
 
-export default FileUpload;
+export default RequestedFileUpload;

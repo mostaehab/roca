@@ -3,29 +3,19 @@ import { FiUploadCloud, FiFileText, FiTrash } from "react-icons/fi";
 import { useState, useRef, useEffect } from "react";
 import { AppContext } from "@/context";
 
-const FileUpload = ({ fileDescription, setUploaded }) => {
-  const { currentCycle, fetchUploadFiles } = AppContext();
+const TobeSignedUpload = ({ id, fileType, name }) => {
+  const { fetchUploadFiles } = AppContext();
   const [selected, setSelected] = useState([]);
-  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [filesUploaded, setFilesUplaoded] = useState(false);
   const inputRef = useRef();
   const currentDate = new Date();
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const authData = JSON.parse(localStorage.getItem("authData"));
-      setData(authData);
-    }
-  }, []);
 
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
       setSelected([...selected, ...Object.values(event.target.files)]);
     }
   };
-
-  console.log(currentCycle);
 
   const onSubmitUpload = async (event) => {
     event.preventDefault();
@@ -34,18 +24,19 @@ const FileUpload = ({ fileDescription, setUploaded }) => {
       let formData = new FormData();
 
       formData.append("FileName", file.name);
-      formData.append("FileDescription", fileDescription);
+      formData.append("FileDescription", "Needs to be signed");
       formData.append("CreatedAt", currentDate.toISOString());
       formData.append("Id", 0);
       formData.append(`file`, file);
       formData.append("UpdatedAt", currentDate.toISOString());
-      formData.append("CreatedBy", data.user.companyName);
-      formData.append("UserCycleId", currentCycle[0]?.id);
-      formData.append("fileTypeId", 1);
+      formData.append("CreatedBy", name);
+      formData.append("UserCycleId", id);
+      formData.append("fileTypeId", fileType);
+
       setLoading(true);
       try {
         const response = await fetchUploadFiles(formData);
-        setUploaded(true);
+        const data = await response.json();
         setFilesUplaoded(true);
       } catch (error) {
         console.error(error);
@@ -118,4 +109,4 @@ const FileUpload = ({ fileDescription, setUploaded }) => {
   );
 };
 
-export default FileUpload;
+export default TobeSignedUpload;

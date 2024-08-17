@@ -6,6 +6,7 @@ const appContext = createContext();
 export const ContextProvider = ({ children }) => {
   const apiUrl = process.env.NEXT_PUBLIC_ROCA_API_URL;
   const [currentCycle, setCurrentCycle] = useState(null);
+  const [toBeSigned, setToBeSigned] = useState(null);
 
   // Register User Request
   const onRegisterUser = async (registerUserData) => {
@@ -138,6 +139,54 @@ export const ContextProvider = ({ children }) => {
     }
   };
 
+  const fetchAllCycles = async () => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/UserCycle/GetCycles?page=1&rows=100`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!response || !response.ok) {
+        return;
+      }
+
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchDownlaodFile = async (fileId) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/Attachement/open-attachment/${fileId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!response || !response.ok) {
+        return;
+      }
+
+      const data = await response.blob();
+      
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <appContext.Provider
       value={{
@@ -148,6 +197,10 @@ export const ContextProvider = ({ children }) => {
         fetchUploadFiles,
         setCurrentCycle,
         fetchGetFiles,
+        fetchAllCycles,
+        setToBeSigned,
+        fetchDownlaodFile,
+        toBeSigned,
         currentCycle,
       }}
     >

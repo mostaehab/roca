@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { AppContext } from "@/context";
 
 const Header = ({ title, subtitle }) => {
+  const { setToBeSigned, setCurrentCycle } = AppContext();
   const [userData, setUserData] = useState(null);
   const router = useRouter();
 
@@ -22,6 +23,10 @@ const Header = ({ title, subtitle }) => {
     localStorage.removeItem("authData");
     localStorage.removeItem("currentCycle");
     localStorage.removeItem("token");
+    localStorage.removeItem("cycleFilesStored");
+    localStorage.clear();
+    setCurrentCycle(null);
+    setToBeSigned(null);
     setUserData(null);
     router.push("/signin");
   };

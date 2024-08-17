@@ -5,20 +5,45 @@ import Agreement from "@/components/Agreement";
 import Form from "@/components/Form";
 import SubmitMessage from "@/components/SubmitMessage";
 import { redirect } from "next/navigation";
+import { AppContext } from "@/context";
 const page = () => {
+  const { currentCycle, fetchGetFiles, toBeSigned, setToBeSigned } =
+    AppContext();
   const [agreed, setAgreed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [cycleFiles, setCycleFiles] = useState(null);
 
-  /*useEffect(() => {
-    if (typeof window !== undefined) {
-      const userData = localStorage.getItem("authData");
-      const userRole = JSON.parse(userData).user?.role;
+  useEffect(() => {
+    const getCycleFiles = async () => {
+      if (currentCycle && currentCycle.length > 0) {
+        try {
+          const response = await fetchGetFiles(currentCycle?.[0]?.id);
+          if (!response.ok) {
+            return;
+          }
+          const data = await response.json();
+          setCycleFiles(data);
+        } catch (error) {
+          console.error("Error fetching cycle files:", error);
+        }
+      }
+    };
 
-      if (userRole && userRole === "System Admin") {
-        redirect("/customerlist");
+    getCycleFiles();
+  }, [currentCycle]);
+
+  useEffect(() => {
+    if (cycleFiles) {
+      const filtered = cycleFiles?.filter((file) => file.fileTypeId === 2);
+
+      if (filtered[0]) {
+        localStorage.setItem("cycleFilesStored", JSON.stringify(filtered));
+        redirect("/filesmanagement");
       }
     }
-  }, []);*/
+  }, [cycleFiles]);
+
+  console.log(cycleFiles);
 
   const agreementHandle = () => {
     setAgreed(!agreed);

@@ -1,10 +1,23 @@
 "use client";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
-import FileUpload from "@/components/FileUpload";
+import RequestedFileUpload from "@/components/RequestedFileUpload";
 import { FiFileText } from "react-icons/fi";
+import { AppContext } from "@/context";
 
 const page = () => {
+  const { toBeSigned, setToBeSigned } = AppContext();
+  const { uploaded, setUploaded } = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      const sessionFiles = localStorage.getItem("cycleFilesStored");
+      const files = JSON.parse(sessionFiles);
+      setToBeSigned(files);
+    }
+  }, []);
+
   return (
     <div>
       <Header></Header>
@@ -20,7 +33,7 @@ const page = () => {
           <div className="mt-[25px]">
             <div className="flex flex-row justify-between">
               <div className="w-[calc(50%-30px)]">
-                <FileUpload></FileUpload>
+                <RequestedFileUpload></RequestedFileUpload>
               </div>
             </div>
           </div>
@@ -32,16 +45,20 @@ const page = () => {
             Please sign the documents below.
           </span>
 
-          <Link href="/pdf">
-            <div>
-              <div className="mt-5 mb-20 cursor-pointer border-2 border-[#B18F13] flex flex-row justify-between bg-[#FBFBFB] rounded-xl p-3">
-                <div className="flex flex-row">
-                  <FiFileText className="text-[24px] text-[#989898] mr-3" />
-                  <span className="text-[#666666]">file name</span>
+          {toBeSigned?.map((file) => {
+            return (
+              <Link key={file.id} href={file.fileName}>
+                <div>
+                  <div className="mt-5 mb-20 cursor-pointer border-2 border-[#B18F13] flex flex-row justify-between bg-[#FBFBFB] rounded-xl p-3">
+                    <div className="flex flex-row">
+                      <FiFileText className="text-[24px] text-[#989898] mr-3" />
+                      <span className="text-[#666666]">{file.fileName}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </Link>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>
