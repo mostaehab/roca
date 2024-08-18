@@ -3,6 +3,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import Link from "next/link";
 import { AppContext } from "@/context";
+import { comma } from "postcss/lib/list";
 const page = () => {
   const { onRegisterUser } = AppContext();
   const [registerUser, setRegisterUser] = useState({
@@ -11,49 +12,43 @@ const page = () => {
     email: "",
     password: "",
   });
-  const [status, setStatus] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const [status, setStatus] = useState(false);
+  const [errorMessages, setErrorMessages] = useState(null);
   const onValueChange = (event) => {
     const { name, value } = event.target;
 
     setRegisterUser({ ...registerUser, [name]: value });
   };
 
-  const passwordValidation = (password) => {
-    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
-    const upperCaseRegex = /[A-Z]/;
-    let error = "";
-
-    if (!specialCharRegex.test(password)) {
-      error =
-        "Password must include at least one special character (e.g., @, ?, !).";
-    } else if (!upperCaseRegex.test(password)) {
-      error = "Password must include at least one uppercase letter.";
-    }
-
-    return error;
-  };
-
-  const onSubmitRegisterForm = async (event) => {
+  const onSubmitRegisterForm = (event) => {
     event.preventDefault();
-    const error = passwordValidation(registerUser.password);
 
-    if (error) {
-      setPasswordError(error);
-      return;
-    }
-
-    const response = await onRegisterUser(registerUser);
-    setStatus(response);
+    return onRegisterUser(registerUser)
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then((errorData) => {
+            // Assuming errorData.errors is an array of strings
+            const errorMessage = errorData.errors
+              ? errorData.errors.join(", ")
+              : "An unknown error occurred";
+            setErrorMessages(errorMessage);
+          });
+        }
+        setErrorMessages(null);
+        setStatus(res.ok);
+      })
+      .catch((error) => {
+        // Handle network or other errors
+        setErrorMessages("An unexpected error occurred");
+      });
   };
-
   return (
     <div>
       <Header subtitle="Sign Up"></Header>
       <div className="container mx-auto flex flex-col justify-center items-center">
         <div className="w-[50%] my-[150px]">
           <div>
-            {status?.ok ? (
+            {status ? (
               <div className="p-10 bg-green-600 rounded-2xl bg-opacity-70 mb-[50px] ">
                 <p className="text-white text-[18px]">
                   Your account has been created, Please Sign in to activate your
@@ -67,6 +62,16 @@ const page = () => {
                 </Link>
               </div>
             ) : null}
+            {errorMessages && (
+              <p className="my-[10px] text-[18px] text-red-600">
+                {typeof errorMessages === "string"
+                  ? errorMessages
+                  : Array.isArray(errorMessages)
+                  ? errorMessages.join(", ")
+                  : "An unexpected error occurred"}
+              </p>
+            )}
+
             <h3 className="text-[26px] mb-[20px] font-medium">Sign up</h3>
           </div>
           <form onSubmit={onSubmitRegisterForm}>
@@ -134,11 +139,6 @@ const page = () => {
                 minLength="6"
                 required
               ></input>
-              <div className="mt-5 text-red-500">
-                {passwordError || (
-                  <span className="block">{passwordError}</span>
-                )}
-              </div>
             </div>
             <p>
               Already having an account?,{" "}

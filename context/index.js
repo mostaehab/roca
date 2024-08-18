@@ -1,5 +1,8 @@
 "use client";
+import { error } from "pdf-lib";
+import { Result } from "postcss";
 import React, { createContext, useContext, useState } from "react";
+const axios = require("axios").default;
 
 const appContext = createContext();
 
@@ -9,22 +12,18 @@ export const ContextProvider = ({ children }) => {
   const [toBeSigned, setToBeSigned] = useState(null);
 
   // Register User Request
-  const onRegisterUser = async (registerUserData) => {
-    try {
-      const response = await fetch(`${apiUrl}/Authentication/RegisterUser`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(registerUserData),
+  const onRegisterUser = (registerUserData) => {
+    return fetch(`${apiUrl}/Authentication/RegisterUser`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(registerUserData),
+    })
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => {
+        throw error; // Re-throw the error so it can be caught by the caller
       });
-
-      if (!response.ok) {
-        throw new Error(`There is an error: ${response.status}`);
-      }
-
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   // Login User Request
