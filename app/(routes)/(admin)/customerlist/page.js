@@ -67,6 +67,7 @@ const Page = () => {
 
         {cyclesToDisplay.map((cycle) => (
           <CustomerActions
+            key={cycle?.id}
             cycle={cycle}
             setAllCycle={setAllCycle}
           ></CustomerActions>
