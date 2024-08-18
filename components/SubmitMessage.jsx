@@ -17,17 +17,21 @@ const SubmitMessage = () => {
       <p className="text-[#6D6D6D] mb-[20px] text-center">
         Documents sent successfully, we’ll get back to you soon once reviewed
       </p>
-      <button className="bg-[#B18F13] py-[20px] px-[25px] rounded-full text-white">
-        <Link href="/">Back to Home</Link>
-      </button>
+
+      <Link
+        href="https://rocaaccountants.co.uk/"
+        className="bg-[#B18F13] py-[20px] px-[25px] rounded-full text-white"
+      >
+        Back to Home
+      </Link>
 
       <div className="mt-10">
         <p className="text-[20px] mb-[10px]">Social Media</p>
         <div className="text-[35px] flex flex-row justify-center">
-          <Link href="/">
+          <Link href="https://www.instagram.com/rocaaccountants">
             <CiInstagram />
           </Link>
-          <Link href="/">
+          <Link href="https://www.linkedin.com/company/rocaaccountants/">
             <CiLinkedin />
           </Link>
         </div>
