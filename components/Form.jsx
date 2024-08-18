@@ -13,9 +13,9 @@ const Form = ({ setSubmitted }) => {
     name: "",
     dateTime: currentDate.toISOString(),
     comment: "",
-    userId: JSON.parse(userData).user.id,
+    userId: JSON.parse(userData)?.user?.id,
   });
-  const [currentView, setCurrentView] = useState("financeAgreements");
+  const [currentView, setCurrentView] = useState("FinanceAgreements");
   const [uploadedFinance, setUploadedFinance] = useState(false);
   const [uploadedBank, setUploadedBank] = useState(false);
   const [uploadedReceipts, setUploadedReceipts] = useState(false);
@@ -39,7 +39,7 @@ const Form = ({ setSubmitted }) => {
       if (!resposne.ok) {
         return;
       }
-      const data = await resposne.json();
+      await resposne.json();
       setCreatedCycle(true);
     } catch (error) {
       console.error(error);
@@ -77,13 +77,10 @@ const Form = ({ setSubmitted }) => {
 
               <div className="mt-10">
                 <ul className="flex flex-row">
-                  <li
-                    onClick={() => setCurrentView("financeAgreements")}
-                    className="flex flex-col items-center mr-[10px] w-[170px] cursor-pointer"
-                  >
+                  <li className="flex flex-col items-center mr-[10px] w-[170px] cursor-pointer">
                     <span
                       className={`flex justify-center items-center text-white w-[70px] h-[70px] text-center text-[24px] rounded-full mb-[10px] ${
-                        currentView === "financeAgreements"
+                        currentView === "FinanceAgreements"
                           ? "bg-[#B18F13]"
                           : "bg-[#fae59a]"
                       } `}
@@ -93,13 +90,10 @@ const Form = ({ setSubmitted }) => {
                     <span className="block">Finance Agreements</span>
                   </li>
 
-                  <li
-                    onClick={() => setCurrentView("bankStatment")}
-                    className="flex flex-col items-center mr-[10px] w-[170px] cursor-pointer"
-                  >
+                  <li className="flex flex-col items-center mr-[10px] w-[170px] cursor-pointer">
                     <span
                       className={`flex justify-center items-center text-white w-[70px] h-[70px] text-center text-[24px] rounded-full mb-[10px] ${
-                        currentView === "bankStatment"
+                        currentView === "BankStatment"
                           ? "bg-[#B18F13]"
                           : "bg-[#fae59a]"
                       } `}
@@ -109,13 +103,10 @@ const Form = ({ setSubmitted }) => {
                     <span className="block">Bank Statment</span>
                   </li>
 
-                  <li
-                    onClick={() => setCurrentView("receipts")}
-                    className="flex flex-col items-center mr-[10px] w-[170px] cursor-pointer"
-                  >
+                  <li className="flex flex-col items-center mr-[10px] w-[170px] cursor-pointer">
                     <span
                       className={`flex justify-center items-center text-white w-[70px] h-[70px] text-center text-[24px] rounded-full mb-[10px] ${
-                        currentView === "receipts"
+                        currentView === "Receipts"
                           ? "bg-[#B18F13]"
                           : "bg-[#fae59a]"
                       } `}
@@ -128,7 +119,7 @@ const Form = ({ setSubmitted }) => {
               </div>
             </div>
 
-            {currentView === "financeAgreements" && (
+            {currentView === "FinanceAgreements" && (
               <div>
                 <div className="w-full flex flex-col lg:flex-row mb-20">
                   <div className="w-[100%] lg:w-[calc(50%-10px)]">
@@ -141,7 +132,9 @@ const Form = ({ setSubmitted }) => {
 
                   <div className="flex flex-col w-[100%] lg:w-[calc(50%-10px)]">
                     <FileUpload
+                      setCurrentView={setCurrentView}
                       fileDescription="FinanceAgreements"
+                      nextView="BankStatment"
                       setUploaded={setUploadedFinance}
                     ></FileUpload>
                   </div>
@@ -149,7 +142,7 @@ const Form = ({ setSubmitted }) => {
               </div>
             )}
 
-            {currentView === "bankStatment" && (
+            {currentView === "BankStatment" && (
               <div>
                 <div className="w-full flex flex-col lg:flex-row mb-20">
                   <div className="w-[100%] lg:w-[calc(50%-10px)]">
@@ -165,7 +158,9 @@ const Form = ({ setSubmitted }) => {
 
                   <div className="flex flex-col w-[100%] lg:w-[calc(50%-10px)]">
                     <FileUpload
+                      setCurrentView={setCurrentView}
                       fileDescription="BankStatment"
+                      nextView="Receipts"
                       setUploaded={setUploadedBank}
                     ></FileUpload>
                   </div>
@@ -173,7 +168,7 @@ const Form = ({ setSubmitted }) => {
               </div>
             )}
 
-            {currentView === "receipts" && (
+            {currentView === "Receipts" && (
               <div>
                 <div className="w-full flex flex-col lg:flex-row mb-20">
                   <div className="w-[100%] lg:w-[calc(50%-10px)]">
@@ -208,12 +203,7 @@ const Form = ({ setSubmitted }) => {
             >
               <div className="w-[100%] mb-[40px]">
                 <label htmlFor="name">
-                  <p className="text-[18px]">
-                    Name*
-                    <span className="inline-block text-center w-[25px] h-[25px] bg-[#B18F13] text-white rounded-full">
-                      1
-                    </span>
-                  </p>
+                  <p className="text-[18px]">Name*</p>
                   <span className="text-[#959595]">
                     Fill in this field with your personal name
                   </span>
@@ -232,12 +222,7 @@ const Form = ({ setSubmitted }) => {
 
               <div className="w-[100%] mb-[40px]">
                 <label htmlFor="name">
-                  <p className="text-[18px]">
-                    Leave a comment
-                    <span className="inline-block text-center w-[25px] h-[25px] bg-[#B18F13] text-white rounded-full">
-                      2
-                    </span>
-                  </p>
+                  <p className="text-[18px]">Leave a comment</p>
                   <span className="text-[#959595]">
                     Leave a comment here if you want to highlight something
                   </span>
@@ -250,7 +235,6 @@ const Form = ({ setSubmitted }) => {
                   onChange={onCycleDataChange}
                   name="comment"
                   id="comment"
-                  required
                 ></textarea>
               </div>
 

@@ -1,5 +1,4 @@
 "use client";
-import { error } from "pdf-lib";
 import React, { createContext, useContext, useState } from "react";
 
 const appContext = createContext();
@@ -8,7 +7,6 @@ export const ContextProvider = ({ children }) => {
   const apiUrl = process.env.NEXT_PUBLIC_ROCA_API_URL;
   const [currentCycle, setCurrentCycle] = useState(null);
   const [toBeSigned, setToBeSigned] = useState(null);
-  const [signed, setSigned] = useState(null);
 
   // Register User Request
   const onRegisterUser = async (registerUserData) => {
@@ -158,7 +156,6 @@ export const ContextProvider = ({ children }) => {
       }
 
       const data = await response.json();
-
       return data;
     } catch (error) {
       console.error(error);
@@ -207,6 +204,43 @@ export const ContextProvider = ({ children }) => {
     }
   };
 
+  const onDeleteCycle = async (cycleId) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/UserCycle/DeleteCycle/${cycleId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+
+      if (!response) {
+        return;
+      }
+
+      return response;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getCycleById = async (cycleId) => {
+    try {
+      const response = await fetch(`${apiUrl}/UserCycle/GetCycle/${cycleId}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
+      if (!response) {
+        return;
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <appContext.Provider
       value={{
@@ -221,8 +255,8 @@ export const ContextProvider = ({ children }) => {
         setToBeSigned,
         fetchDownlaodFile,
         deleteFiles,
-        signed,
-        setSigned,
+        onDeleteCycle,
+        getCycleById,
         toBeSigned,
         currentCycle,
       }}

@@ -5,17 +5,59 @@ import Header from "@/components/Header";
 import RequestedFileUpload from "@/components/RequestedFileUpload";
 import { FiFileText } from "react-icons/fi";
 import { AppContext } from "@/context";
+import { redirect } from "next/navigation";
 
 const page = () => {
-  const { toBeSigned, setToBeSigned, signed } = AppContext();
+  const { toBeSigned, setToBeSigned, currentCycle, fetchGetFiles } =
+    AppContext();
+  const [cycleFiles, setCycleFiles] = useState(null);
 
   useEffect(() => {
-    if (typeof window !== undefined) {
-      const sessionFiles = localStorage.getItem("cycleFilesStored");
-      const files = JSON.parse(sessionFiles);
-      setToBeSigned(files);
+    const authData = JSON.parse(localStorage.getItem("authData"));
+    if (!authData) {
+      redirect("/signin");
     }
-  }, [signed]);
+  }, []);
+
+  useEffect(() => {
+    const getCycleFiles = async () => {
+      if (currentCycle && currentCycle.length > 0) {
+        try {
+          const response = await fetchGetFiles(currentCycle?.[0]?.id);
+          if (!response.ok) {
+            return;
+          }
+          const data = await response.json();
+          setCycleFiles(data);
+          console.log(data);
+        } catch (error) {
+          console.error("Error fetching cycle files:", error);
+        }
+      }
+    };
+
+    getCycleFiles();
+  }, [currentCycle]);
+
+  useEffect(() => {
+    if (cycleFiles) {
+      const filtered = cycleFiles?.filter((file) => file.fileTypeId === 2);
+
+      const editedArr = filtered.map((file) => {
+        const editedName = file.fileName.replace(" ", "_");
+        return { ...file, fileName: editedName };
+      });
+      if (filtered[0]) {
+        setToBeSigned(editedArr);
+      }
+
+      console.log(editedArr);
+
+      if (filtered.length === 0) {
+        redirect("/documents");
+      }
+    }
+  }, [cycleFiles]);
 
   return (
     <div>
@@ -31,7 +73,7 @@ const page = () => {
 
           <div className="mt-[25px]">
             <div className="flex flex-row justify-between">
-              <div className="w-[calc(50%-30px)]">
+              <div className="w-full lg:w-[calc(50%-30px)]">
                 <RequestedFileUpload></RequestedFileUpload>
               </div>
             </div>

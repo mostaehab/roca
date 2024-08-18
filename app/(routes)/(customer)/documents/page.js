@@ -14,6 +14,13 @@ const page = () => {
   const [cycleFiles, setCycleFiles] = useState(null);
 
   useEffect(() => {
+    const authData = JSON.parse(localStorage.getItem("authData"));
+    if (!authData) {
+      redirect("/signin");
+    }
+  }, []);
+
+  useEffect(() => {
     const getCycleFiles = async () => {
       if (currentCycle && currentCycle.length > 0) {
         try {
@@ -30,7 +37,7 @@ const page = () => {
     };
 
     getCycleFiles();
-  }, [currentCycle, signed]);
+  }, [currentCycle]);
 
   useEffect(() => {
     if (cycleFiles) {
@@ -42,8 +49,6 @@ const page = () => {
       }
     }
   }, [cycleFiles]);
-
-  console.log(cycleFiles);
 
   const agreementHandle = () => {
     setAgreed(!agreed);

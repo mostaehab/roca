@@ -3,7 +3,9 @@ import React, { useRef, useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { modifyPdf } from "@/utils/pdfUtils";
 import { AppContext } from "@/context";
+import { useRouter } from "next/navigation";
 import { redirect } from "next/navigation";
+
 const page = () => {
   const {
     fetchDownlaodFile,
@@ -12,8 +14,7 @@ const page = () => {
     fetchGetCycle,
     setCurrentCycle,
     deleteFiles,
-    signed,
-    setSigned,
+    toBeSigned,
   } = AppContext();
   const canvasRef = useRef(null);
   const [drawing, setDrawing] = useState(false);
@@ -26,18 +27,28 @@ const page = () => {
   const [toBeUploaded, setToBeUploaded] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [data, setData] = useState(null);
+  const [uploaded, setUploaded] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const currentDate = new Date();
+  const router = useRouter();
 
   useEffect(() => {
-    if (signed) {
-      setFile(null);
-      setToBeUploaded(null);
-      redirect("/filesmanagement");
+    const authData = JSON.parse(localStorage.getItem("authData"));
+    if (!authData) {
+      redirect("/signin");
     }
-  }, [deleteFiles]);
+  }, []);
 
-  console.log(signed);
+  const onBackHome = async () => {
+    try {
+      const response = await deleteFiles(file?.[0]?.id);
+      console.log(response);
+      router.push("/filesmanagement");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== undefined) {
@@ -58,8 +69,6 @@ const page = () => {
           }
 
           setCurrentCycle(dataCycle);
-
-          console.log(dataDelete);
         } catch (error) {
           console.error("Error fetching user cycle:", error);
         }
@@ -72,14 +81,13 @@ const page = () => {
   useEffect(() => {
     setIsClient(true);
     if (typeof window !== undefined) {
-      const files = JSON.parse(localStorage.getItem("cycleFilesStored"));
-      const filesNames = files?.map((file) => file?.fileName);
+      const filesNames = toBeSigned?.map((file) => file?.fileName);
       const currentPath = window.location.pathname.slice(1); // Remove leading slash
       if (!filesNames?.includes(currentPath)) {
         redirect("/filesmanagement");
       }
       const fileName = window.location.pathname.slice(1);
-      const file = files.filter((file) => file.fileName === fileName);
+      const file = toBeSigned?.filter((file) => file.fileName === fileName);
       setFile(file);
     }
   }, []);
@@ -124,10 +132,9 @@ const page = () => {
     event.preventDefault();
 
     if (currentCycle) {
-      console.log(toBeUploaded);
       let formData = new FormData();
       formData.append("FileName", toBeUploaded.name);
-      formData.append("FileDescription", "Signed document");
+      formData.append("FileDescription", "Signed Document");
       formData.append("CreatedAt", currentDate.toISOString());
       formData.append("Id", 0);
       formData.append(`file`, toBeUploaded);
@@ -139,24 +146,18 @@ const page = () => {
       for (let [key, value] of formData.entries()) {
         console.log(`${key} : ${value}`);
       }
-      try {
-        const response = await fetchUploadFiles(formData);
-        console.log(response);
-        setSigned(true);
 
-        await deleteFiles(file[0].id);
+      setLoading(true);
+      try {
+        await fetchUploadFiles(formData);
+        setUploaded(true);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     }
   };
-
-  if (isClient && canvasRef.current) {
-    window.addEventListener("resize", () => {
-      const canavs = canvasRef.current;
-      canavs.width = 500;
-    });
-  }
 
   const onDigitalSignature = (event) => {
     const { value } = event.target;
@@ -260,26 +261,46 @@ const page = () => {
               ></canvas>
             </div>
 
-            <input
-              type="submit"
-              className="cursor-pointer bg-[#B18F13] mb-10 mr-5 py-[15px] px-[40px] rounded-full text-white mt-[20px]"
-              value="Submit"
-            ></input>
+            {loading && <div className="mt-[20px]">Uploading Files...</div>}
+            {uploaded && (
+              <div className="mt-[20px] text-green-600">
+                Files Uploaded successfully
+              </div>
+            )}
 
-            <button
-              onClick={clearCanvas}
-              className="cursor-pointer bg-white border-[#B18F13] border-2 mb-10 py-[15px] px-[40px] rounded-full mt-[20px]"
-            >
-              Clear
-            </button>
+            {uploaded ? (
+              <div>
+                <button
+                  onClick={onBackHome}
+                  className="cursor-pointer bg-[#B18F13] mb-10 mx-5 py-[15px] px-[40px] rounded-full text-white mt-[20px]"
+                >
+                  Back to home
+                </button>
+              </div>
+            ) : (
+              <div>
+                <input
+                  type="submit"
+                  className="cursor-pointer bg-[#B18F13] mb-10 mr-5 py-[15px] px-[40px] rounded-full text-white mt-[20px]"
+                  value="Submit"
+                ></input>
 
-            {submitted && (
-              <button
-                onClick={onSubmitUpload}
-                className="cursor-pointer bg-[#B18F13] mb-10 mx-5 py-[15px] px-[40px] rounded-full text-white mt-[20px]"
-              >
-                Upload
-              </button>
+                <button
+                  onClick={clearCanvas}
+                  className="cursor-pointer bg-white border-[#B18F13] border-2 mb-10 py-[15px] px-[40px] rounded-full mt-[20px]"
+                >
+                  Clear
+                </button>
+
+                {submitted && (
+                  <button
+                    onClick={onSubmitUpload}
+                    className="cursor-pointer bg-[#B18F13] mb-10 mx-5 py-[15px] px-[40px] rounded-full text-white mt-[20px]"
+                  >
+                    Upload
+                  </button>
+                )}
+              </div>
             )}
           </form>
         </div>

@@ -93,9 +93,12 @@ const TobeSignedUpload = ({ id, fileType, name }) => {
             </div>
           ))}
 
-        {loading && <div>Loading</div>}
-        {filesUploaded && <div>Files uploaded successfully</div>}
-
+        {loading && <div className="mt-[20px]">Uploading Files...</div>}
+        {filesUploaded && (
+          <div className="mt-[20px] text-green-600">
+            Files Uploaded successfully
+          </div>
+        )}
         <div>
           <input
             type="submit"

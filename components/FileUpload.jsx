@@ -3,7 +3,12 @@ import { FiUploadCloud, FiFileText, FiTrash } from "react-icons/fi";
 import { useState, useRef, useEffect } from "react";
 import { AppContext } from "@/context";
 
-const FileUpload = ({ fileDescription, setUploaded }) => {
+const FileUpload = ({
+  fileDescription,
+  setUploaded,
+  setCurrentView,
+  nextView,
+}) => {
   const { currentCycle, fetchUploadFiles } = AppContext();
   const [selected, setSelected] = useState([]);
   const [data, setData] = useState(null);
@@ -46,6 +51,7 @@ const FileUpload = ({ fileDescription, setUploaded }) => {
         const data = await response.json();
         setUploaded(true);
         setFilesUplaoded(true);
+        setCurrentView(nextView);
       } catch (error) {
         console.error(error);
       } finally {
@@ -57,8 +63,6 @@ const FileUpload = ({ fileDescription, setUploaded }) => {
   const onChooseFile = () => {
     inputRef.current.click();
   };
-
-  const onSubmitClick = () => {};
 
   const onRemove = (index) => {
     setSelected(selected.filter((_, i) => i !== index));
@@ -101,15 +105,18 @@ const FileUpload = ({ fileDescription, setUploaded }) => {
             </div>
           ))}
 
-        {loading && <div>Loading</div>}
-        {filesUploaded && <div>Files uploaded successfully</div>}
+        {loading && <div className="mt-[20px]">Uploading Files...</div>}
+        {filesUploaded && (
+          <div className="mt-[20px] text-green-600">
+            Files Uploaded successfully
+          </div>
+        )}
 
         <div>
           <input
             type="submit"
             value="Upload"
             className="cursor-pointer my-[50px] bg-[#B18F13] py-[15px] px-[40px] rounded-full text-white"
-            onClick={onSubmitClick}
           ></input>
         </div>
       </form>
