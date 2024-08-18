@@ -134,9 +134,9 @@ const page = () => {
                 minLength="6"
                 required
               ></input>
-              <div className="mt-5">
+              <div className="mt-5 text-red-500">
                 {passwordError || (
-                  <span className="block text-red-500">{passwordError}</span>
+                  <span className="block">{passwordError}</span>
                 )}
               </div>
             </div>

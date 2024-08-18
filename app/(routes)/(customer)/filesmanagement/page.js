@@ -44,7 +44,7 @@ const page = () => {
       const filtered = cycleFiles?.filter((file) => file.fileTypeId === 2);
 
       const editedArr = filtered.map((file) => {
-        const editedName = file.fileName.replace(" ", "_");
+        const editedName = file.fileName.replace(/\s+/g, "_");
         return { ...file, fileName: editedName };
       });
       if (filtered[0]) {
