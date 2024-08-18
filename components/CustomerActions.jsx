@@ -64,7 +64,7 @@ const CustomerActions = ({ cycle, setAllCycle }) => {
         {expandedCycleId === cycle.id && (
           <div className="p-10">
             <div className="block lg:flex flex-row justify-between">
-              <div className="w-[calc(50%-30px)] mb-[20px]">
+              <div className="w-full lg:w-[calc(50%-30px)] text-[10px] lg:text-[16px] mb-[20px]">
                 <h4 className="text-[18px]">Request Documents</h4>
                 <p className="text-[#858585]">
                   Click the button below to be redirected to the email portal
@@ -91,7 +91,7 @@ const CustomerActions = ({ cycle, setAllCycle }) => {
                 </div>
               </div>
 
-              <div className="lg:w-[calc(50%-30px)] w-full">
+              <div className="lg:w-[calc(50%-30px)] w-full text-[10px] lg:text-[16px]">
                 <h4 className="text-[18px] mb-5">Documents to Sign</h4>
                 <TobeSignedUpload
                   id={cycle.id}

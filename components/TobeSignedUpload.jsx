@@ -72,9 +72,7 @@ const TobeSignedUpload = ({ id, fileType, name }) => {
             accept="application/pdf"
           ></input>
           <FiUploadCloud className="block text-[80px] text-[#B18F13]"></FiUploadCloud>
-          <p className="text-[#9D9D9D]">
-            Drag and drop or click to upload files
-          </p>
+          <p className="text-[#9D9D9D] p-[10px]">click to upload files</p>
         </div>
 
         {selected.length > 0 &&
