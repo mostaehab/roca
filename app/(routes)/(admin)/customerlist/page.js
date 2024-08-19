@@ -34,7 +34,7 @@ const Page = () => {
   }, [fetchAllCycles]); // Dependency on fetchAllCycles
 
   const onSearchCycle = (event) => {
-    const searchValue = event.target.value.trim().toLowerCase(); // Trim whitespace and make search case-insensitive
+    const searchValue = event.target.value.trim().toLowerCase();
     if (Array.isArray(allCycle) && searchValue) {
       const searchedCycleVar = allCycle.filter((cycle) =>
         cycle.name.toLowerCase().includes(searchValue)

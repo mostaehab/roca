@@ -26,13 +26,13 @@ const FIlesContainer = ({ title, files }) => {
           {title}
         </p>
         {files && files.length > 0 ? (
-          <div className="flex flex-row">
+          <div className="flex flex-wrap">
             {files?.map((file) => {
               return (
                 <div
                   key={file?.id}
                   onClick={() => onFileClick(file?.id, file?.fileName)}
-                  className="bg-white border-[#B18F13] border-2 text-stone-600 cursor-pointer p-10  text-[18px] rounded-2xl w-[calc(33.333%-10px)] mr-[10px] mb-[20px]"
+                  className="bg-white border-[#B18F13] border-2 text-stone-600 cursor-pointer p-10  text-[18px] rounded-2xl w-full xl:w-[calc(33.333%-10px)] mr-[10px] mb-[20px]"
                 >
                   <FiFileText className="text-[36px] mb-[10px]"></FiFileText>
                   {file?.fileName}

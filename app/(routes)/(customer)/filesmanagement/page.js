@@ -90,7 +90,7 @@ const page = () => {
             return (
               <Link key={file.id} href={file.fileName}>
                 <div>
-                  <div className="mt-5 mb-20 cursor-pointer border-2 border-[#B18F13] flex flex-row justify-between bg-[#FBFBFB] rounded-xl p-3">
+                  <div className="mt-5 mb-[10px] cursor-pointer border-2 border-[#B18F13] flex flex-row justify-between bg-[#FBFBFB] rounded-xl p-3">
                     <div className="flex flex-row">
                       <FiFileText className="text-[24px] text-[#989898] mr-3" />
                       <span className="text-[#666666]">{file.fileName}</span>
