@@ -213,7 +213,7 @@ const page = () => {
 
           <p>{file?.[0]?.fileName}</p>
 
-          <div className="w-[600px] h-[750px] mx-auto  rounded-xl">
+          <div className="w-[60%] h-[80vh] mx-auto  rounded-xl">
             <iframe
               className="w-full h-full"
               src={pdfUrl ? pdfUrl : link}
@@ -272,7 +272,7 @@ const page = () => {
               <div>
                 <button
                   onClick={onBackHome}
-                  className="cursor-pointer bg-[#B18F13] mb-10 mx-5 py-[15px] px-[40px] rounded-full text-white mt-[20px]"
+                  className="cursor-pointer bg-[#B18F13] mb-10 mx-5 py-[15px] px-[40px] rounded-full text-white mt-[20px] text-[10px] lg:text-[18px]"
                 >
                   Back to home
                 </button>
@@ -281,13 +281,13 @@ const page = () => {
               <div>
                 <input
                   type="submit"
-                  className="cursor-pointer bg-[#B18F13] mb-10 mr-5 py-[15px] px-[40px] rounded-full text-white mt-[20px]"
+                  className="cursor-pointer bg-[#B18F13] mb-10 mr-5 py-[15px] px-[40px] rounded-full text-white mt-[20px] text-[10px] lg:text-[18px]"
                   value="Submit"
                 ></input>
 
                 <button
                   onClick={clearCanvas}
-                  className="cursor-pointer bg-white border-[#B18F13] border-2 mb-10 py-[15px] px-[40px] rounded-full mt-[20px]"
+                  className="cursor-pointer bg-white border-[#B18F13] border-2 mb-10 py-[15px] px-[40px] rounded-full mt-[20px] text-[10px] lg:text-[18px]"
                 >
                   Clear
                 </button>
@@ -295,7 +295,7 @@ const page = () => {
                 {submitted && (
                   <button
                     onClick={onSubmitUpload}
-                    className="cursor-pointer bg-[#B18F13] mb-10 mx-5 py-[15px] px-[40px] rounded-full text-white mt-[20px]"
+                    className="cursor-pointer bg-[#B18F13] mb-10 mx-5 py-[15px] px-[40px] rounded-full text-white mt-[20px] text-[10px] lg:text-[18px]"
                   >
                     Upload
                   </button>
