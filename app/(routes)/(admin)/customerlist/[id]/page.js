@@ -7,15 +7,17 @@ const page = () => {
   const { getCycleById, fetchGetFiles } = AppContext();
   const [currentCycle, setCurrentCycle] = useState(null);
   const [cycleFiles, setCycleFiles] = useState(null);
-  const [financeAgreements, setFinanceAgreements] = useState(null);
-  const [bankStatment, setBankStatment] = useState(null);
-  const [receipts, setReceipts] = useState(null);
+  const [accountingDocuments, setAccountingDocuments] = useState(null);
   const [requested, setRequested] = useState(null);
   const [signed, setSigned] = useState(null);
   useEffect(() => {
     const authData = JSON.parse(localStorage.getItem("authData"));
     if (!authData) {
       redirect("/signin");
+    }
+
+    if (authData?.user?.role !== "System Admin") {
+      redirect("/documents");
     }
   }, []);
 
@@ -52,20 +54,11 @@ const page = () => {
 
   useEffect(() => {
     if (cycleFiles) {
-      const financeAgreements = cycleFiles.filter((file) => {
-        return file?.fileDescription === "FinanceAgreements";
+      const accountingDocuments = cycleFiles.filter((file) => {
+        return file?.fileDescription === "AccountingDocuments";
       });
-      setFinanceAgreements(financeAgreements);
+      setAccountingDocuments(accountingDocuments);
 
-      const bankStatment = cycleFiles.filter((file) => {
-        return file?.fileDescription === "BankStatment";
-      });
-      setBankStatment(bankStatment);
-
-      const receipts = cycleFiles.filter((file) => {
-        return file?.fileDescription === "Receipts";
-      });
-      setReceipts(receipts);
       const requested = cycleFiles.filter((file) => {
         return file?.fileDescription === "Requested File";
       });
@@ -91,14 +84,9 @@ const page = () => {
           <div>
             {" "}
             <FIlesContainer
-              title="Finance Agreements"
-              files={financeAgreements}
+              title="Accounting Documents"
+              files={accountingDocuments}
             ></FIlesContainer>
-            <FIlesContainer
-              title="Bank Statments"
-              files={bankStatment}
-            ></FIlesContainer>
-            <FIlesContainer title="Receipts" files={receipts}></FIlesContainer>
             <FIlesContainer
               title="Requested Files"
               files={requested}

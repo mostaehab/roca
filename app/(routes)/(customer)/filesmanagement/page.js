@@ -29,7 +29,6 @@ const page = () => {
           }
           const data = await response.json();
           setCycleFiles(data);
-          console.log(data);
         } catch (error) {
           console.error("Error fetching cycle files:", error);
         }
@@ -51,13 +50,11 @@ const page = () => {
         setToBeSigned(editedArr);
       }
 
-      console.log(editedArr);
-
-      if (filtered.length === 0) {
+      if (filtered.length === 0 && !currentCycle?.[0]?.completed) {
         redirect("/documents");
       }
     }
-  }, [cycleFiles]);
+  }, [cycleFiles, currentCycle]);
 
   return (
     <div>
@@ -68,7 +65,7 @@ const page = () => {
         <div>
           <h4 className="mt-[25px] text-[18px]">Requested Files</h4>
           <span className="text-[16px] text-[#A6A6A6]">
-            Upload the files requested here.
+            Make sure to upload all of the required files here.
           </span>
 
           <div className="mt-[25px]">
@@ -86,20 +83,26 @@ const page = () => {
             Please sign the documents below.
           </span>
 
-          {toBeSigned?.map((file) => {
-            return (
-              <Link key={file.id} href={file.fileName}>
-                <div>
-                  <div className="mt-5 mb-[10px] cursor-pointer border-2 border-[#B18F13] flex flex-row justify-between bg-[#FBFBFB] rounded-xl p-3">
-                    <div className="flex flex-row">
-                      <FiFileText className="text-[24px] text-[#989898] mr-3" />
-                      <span className="text-[#666666]">{file.fileName}</span>
+          {toBeSigned ? (
+            toBeSigned?.map((file) => {
+              return (
+                <Link key={file.id} href={file.fileName}>
+                  <div>
+                    <div className="mt-5 mb-[10px] cursor-pointer border-2 border-[#B18F13] flex flex-row justify-between bg-[#FBFBFB] rounded-xl p-3">
+                      <div className="flex flex-row">
+                        <FiFileText className="text-[24px] text-[#989898] mr-3" />
+                        <span className="text-[#666666]">{file.fileName}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            );
-          })}
+                </Link>
+              );
+            })
+          ) : (
+            <div className="text-[24px] my-10 text-center">
+              <p>Currently there are no files to sign</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

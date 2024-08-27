@@ -34,7 +34,7 @@ export const modifyPdf = async (imgUrl, pdfBase64, digitalSign) => {
     const y = (newPage.getHeight() - height) / 2;
 
     // Draw text and image on the new page
-    newPage.drawText("Your Name", {
+    newPage.drawText("Customer Name", {
       x: 30,
       y: 150,
       size: 18,
@@ -45,7 +45,7 @@ export const modifyPdf = async (imgUrl, pdfBase64, digitalSign) => {
       size: 14,
       color: rgb(79 / 255, 79 / 255, 79 / 255),
     });
-    newPage.drawText("Your Freehand Signature", {
+    newPage.drawText("Freehand Signature", {
       x: 30,
       y: 90,
       size: 18,

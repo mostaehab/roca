@@ -1,7 +1,7 @@
 "use client";
 import { error } from "pdf-lib";
 import { Result } from "postcss";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 const axios = require("axios").default;
 
 const appContext = createContext();
@@ -98,7 +98,7 @@ export const ContextProvider = ({ children }) => {
   //Upload files
   const fetchUploadFiles = async (formData) => {
     try {
-      const response = await fetch(`${apiUrl}/Attachement/add-attachment`, {
+      const response = await fetch(`${apiUrl}/Attachement/upload-attachment`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -138,10 +138,12 @@ export const ContextProvider = ({ children }) => {
     }
   };
 
-  const fetchAllCycles = async () => {
+  const fetchAllCycles = async (query) => {
     try {
       const response = await fetch(
-        `${apiUrl}/UserCycle/GetCycles?page=1&rows=100`,
+        `${apiUrl}/UserCycle/GetCycles${
+          query ? "?page=1&rows=100&searchText=" + query : "?page=1&rows=100"
+        }`,
         {
           method: "GET",
           headers: {
@@ -164,9 +166,9 @@ export const ContextProvider = ({ children }) => {
   const fetchDownlaodFile = async (fileId) => {
     try {
       const response = await fetch(
-        `${apiUrl}/Attachement/open-attachment/${fileId}`,
+        `${apiUrl}/Attachement/download-attachment/${fileId}`,
         {
-          method: "GET",
+          method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -240,6 +242,92 @@ export const ContextProvider = ({ children }) => {
     }
   };
 
+  const fetchAllUsers = async (query) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/User/GetUsers/${query ? "?searchText=" + query : ""}`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+
+      if (!response) {
+        return;
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const resetPassword = async (userData) => {
+    const response = await fetch(`${apiUrl}/Authentication/ResetPassword`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response) {
+      return;
+    }
+
+    return response;
+  };
+
+  const updateCycle = async (id, updateBody) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/UserCycle/Admin/UpdateCycle?id=${id}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updateBody),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error in updateCycle:", error);
+      throw error;
+    }
+  };
+
+  const requestFile = async (fileBody) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/RequestedFiles/Admin/RequireFile`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(fileBody),
+        }
+      );
+
+      if (!response) {
+        return;
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <appContext.Provider
       value={{
@@ -256,6 +344,10 @@ export const ContextProvider = ({ children }) => {
         deleteFiles,
         onDeleteCycle,
         getCycleById,
+        fetchAllUsers,
+        resetPassword,
+        updateCycle,
+        requestFile,
         toBeSigned,
         currentCycle,
       }}

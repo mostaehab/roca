@@ -1,7 +1,6 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ContextProvider } from "@/context";
-import Head from "next/head";
 
 const poppins = Poppins({
   subsets: ["latin"],

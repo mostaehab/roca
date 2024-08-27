@@ -15,17 +15,15 @@ const Form = ({ setSubmitted }) => {
     comment: "",
     userId: JSON.parse(userData)?.user?.id,
   });
-  const [currentView, setCurrentView] = useState("FinanceAgreements");
-  const [uploadedFinance, setUploadedFinance] = useState(false);
-  const [uploadedBank, setUploadedBank] = useState(false);
-  const [uploadedReceipts, setUploadedReceipts] = useState(false);
+
+  const [filesUploaded, setFilesUploaded] = useState(false);
   const [createdCycle, setCreatedCycle] = useState(false);
 
   useEffect(() => {
-    if (uploadedFinance && uploadedBank && uploadedReceipts) {
+    if (filesUploaded) {
       setSubmitted(true);
     }
-  }, [uploadedFinance, uploadedBank, uploadedReceipts]);
+  }, [filesUploaded]);
 
   const onCycleDataChange = (event) => {
     const { name, value } = event.target;
@@ -68,128 +66,25 @@ const Form = ({ setSubmitted }) => {
     <main>
       <div className="container max-w-[90%] mx-auto py-[50px]">
         {currentCycle[0] ? (
-          <div>
-            <div className="my-[60px]">
-              <h3 className="text-[24px]">Upload Files</h3>
-              <span className="text-[#959595]">
-                Upload your financial documents for submission.
-              </span>
+          <div className="mt-20">
+            <div>
+              <div className="w-full flex flex-col lg:flex-row mb-20">
+                <div className="w-[100%] lg:w-[calc(50%-10px)]">
+                  <p className="text-[20px] mb-[20px]">Accounting Documents</p>
+                  <span className="text-[#A6A6A6] block w-[100%] mb-5 lg:w-[70%]">
+                    Upload your any documentations to be viewed for your
+                    accounts. Example: Morgage Agreements, HP Agreements...etc
+                  </span>
+                </div>
 
-              <div className="mt-10">
-                <ul className="flex flex-row">
-                  <li className="flex flex-col items-center mr-[10px] w-[170px] cursor-pointer">
-                    <span
-                      className={`flex justify-center items-center text-white w-[70px] h-[70px] text-center text-[24px] rounded-full mb-[10px] ${
-                        currentView === "FinanceAgreements"
-                          ? "bg-[#B18F13]"
-                          : "bg-[#fae59a]"
-                      } `}
-                    >
-                      1
-                    </span>
-                    <span className="block">Finance Agreements</span>
-                  </li>
-
-                  <li className="flex flex-col items-center mr-[10px] w-[170px] cursor-pointer">
-                    <span
-                      className={`flex justify-center items-center text-white w-[70px] h-[70px] text-center text-[24px] rounded-full mb-[10px] ${
-                        currentView === "BankStatment"
-                          ? "bg-[#B18F13]"
-                          : "bg-[#fae59a]"
-                      } `}
-                    >
-                      2
-                    </span>
-                    <span className="block">Bank Statment</span>
-                  </li>
-
-                  <li className="flex flex-col items-center mr-[10px] w-[170px] cursor-pointer">
-                    <span
-                      className={`flex justify-center items-center text-white w-[70px] h-[70px] text-center text-[24px] rounded-full mb-[10px] ${
-                        currentView === "Receipts"
-                          ? "bg-[#B18F13]"
-                          : "bg-[#fae59a]"
-                      } `}
-                    >
-                      3
-                    </span>
-                    <span className="block">Receipts</span>
-                  </li>
-                </ul>
+                <div className="flex flex-col w-[100%] lg:w-[calc(50%-10px)]">
+                  <FileUpload
+                    fileDescription="AccountingDocuments"
+                    setUploaded={setFilesUploaded}
+                  ></FileUpload>
+                </div>
               </div>
             </div>
-
-            {currentView === "FinanceAgreements" && (
-              <div>
-                <div className="w-full flex flex-col lg:flex-row mb-20">
-                  <div className="w-[100%] lg:w-[calc(50%-10px)]">
-                    <p className="text-[20px] mb-[20px]">Finance Agreements</p>
-                    <span className="text-[#A6A6A6] block w-[100%] mb-5 lg:w-[70%]">
-                      Upload your any documentations to be viewed for your
-                      accounts. Example: Morgage Agreements, HP Agreements...etc
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col w-[100%] lg:w-[calc(50%-10px)]">
-                    <FileUpload
-                      setCurrentView={setCurrentView}
-                      fileDescription="FinanceAgreements"
-                      nextView="BankStatment"
-                      setUploaded={setUploadedFinance}
-                    ></FileUpload>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {currentView === "BankStatment" && (
-              <div>
-                <div className="w-full flex flex-col lg:flex-row mb-20">
-                  <div className="w-[100%] lg:w-[calc(50%-10px)]">
-                    <p className="text-[20px] mb-[20px]">Bank Statment</p>
-                    <span className="text-[#A6A6A6] block w-[100%] mb-5 lg:w-[70%]">
-                      Upload your company's bank statements. Bank statements
-                      show your financial transactions, including deposits,
-                      withdrawals, and balances. They are important for
-                      verifying your financial activities and maintaining
-                      accurate records
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col w-[100%] lg:w-[calc(50%-10px)]">
-                    <FileUpload
-                      setCurrentView={setCurrentView}
-                      fileDescription="BankStatment"
-                      nextView="Receipts"
-                      setUploaded={setUploadedBank}
-                    ></FileUpload>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {currentView === "Receipts" && (
-              <div>
-                <div className="w-full flex flex-col lg:flex-row mb-20">
-                  <div className="w-[100%] lg:w-[calc(50%-10px)]">
-                    <p className="text-[20px] mb-[20px]">Receipts</p>
-                    <span className="text-[#A6A6A6] block w-[100%] mb-5 lg:w-[70%]">
-                      Provide your receipts for various expenses. Receipts are
-                      proof of your business expenditures and are necessary for
-                      accounting and tax purposes. They help in tracking
-                      spending and verifying expense claims.
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col w-[100%] lg:w-[calc(50%-10px)]">
-                    <FileUpload
-                      fileDescription="Receipts"
-                      setUploaded={setUploadedReceipts}
-                    ></FileUpload>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         ) : (
           <div>

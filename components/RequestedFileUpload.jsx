@@ -2,10 +2,17 @@
 import { FiUploadCloud, FiFileText, FiTrash } from "react-icons/fi";
 import { useState, useRef, useEffect } from "react";
 import { AppContext } from "@/context";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const RequestedFileUpload = () => {
-  const { currentCycle, fetchUploadFiles, setCurrentCycle, fetchGetCycle } =
-    AppContext();
+  const {
+    currentCycle,
+    fetchUploadFiles,
+    setCurrentCycle,
+    fetchGetCycle,
+    updateCycle,
+  } = AppContext();
 
   const [selected, setSelected] = useState([]);
   const [data, setData] = useState(null);
@@ -13,6 +20,11 @@ const RequestedFileUpload = () => {
   const [filesUploaded, setFilesUplaoded] = useState(false);
   const inputRef = useRef();
   const currentDate = new Date();
+  const putBody = {
+    ...currentCycle?.[0],
+    completed: false,
+  };
+  const router = useRouter();
 
   useEffect(() => {
     const userData = localStorage.getItem("authData");
@@ -23,7 +35,6 @@ const RequestedFileUpload = () => {
         try {
           const data = await fetchGetCycle(userId);
           setCurrentCycle(data);
-          console.log(data);
         } catch (error) {
           console.error("Error fetching user cycle:", error);
         }
@@ -65,11 +76,16 @@ const RequestedFileUpload = () => {
         setLoading(true);
         try {
           const response = await fetchUploadFiles(formData);
+          if (!response) {
+            return;
+          }
           setFilesUplaoded(true);
+          await updateCycle(currentCycle?.[0]?.id, putBody);
         } catch (error) {
           console.error(error);
         } finally {
           setLoading(false);
+          router.push("/documents");
         }
       }
     });

@@ -1,77 +1,44 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
-import CustomerActions from "@/components/CustomerActions";
-import { AppContext } from "@/context";
 import { redirect } from "next/navigation";
+import CycleList from "@/components/CycleList";
+import UserList from "@/components/UserList";
 
 const Page = () => {
-  const { fetchAllCycles } = AppContext();
-  const [allCycle, setAllCycle] = useState([]);
-  const [searchedCycle, setSearchedCycle] = useState(null);
+  const [pageView, setPageView] = useState(true);
 
   useEffect(() => {
     const authData = JSON.parse(localStorage.getItem("authData"));
     if (!authData) {
       redirect("/signin");
     }
-  }, []);
 
-  useEffect(() => {
-    const getAllCurrentCycles = async () => {
-      try {
-        const data = await fetchAllCycles();
-        if (data) {
-          setAllCycle(data);
-          console.log(data);
-        }
-      } catch (error) {
-        console.error("Fetch error:", error);
-      }
-    };
-
-    getAllCurrentCycles();
-  }, [fetchAllCycles]); // Dependency on fetchAllCycles
-
-  const onSearchCycle = (event) => {
-    const searchValue = event.target.value.trim().toLowerCase();
-    if (Array.isArray(allCycle) && searchValue) {
-      const searchedCycleVar = allCycle.filter((cycle) =>
-        cycle.name.toLowerCase().includes(searchValue)
-      );
-
-      if (searchedCycleVar) {
-        setSearchedCycle(() => searchedCycleVar);
-      } else {
-        console.log("No cycle found with the name:", searchValue);
-      }
-    } else {
-      console.log("Invalid search or no cycles available.");
+    if (authData?.user?.role !== "System Admin") {
+      redirect("/documents");
     }
-  };
-
-  const cyclesToDisplay = searchedCycle || allCycle;
+  }, []);
 
   return (
     <div>
       <Header title="Admin Portal"></Header>
 
       <div className="container max-w-[90%] mx-auto">
-        <h3 className="text-[24px] mt-10">Customer List</h3>
-        <input
-          type="text"
-          placeholder="Search for customers by Name"
-          onChange={onSearchCycle}
-          className="block w-full border-[#A3A3A3] border-2 p-[20px] rounded-xl bg-[#FBFBFB] mt-10"
-        ></input>
-
-        {cyclesToDisplay.map((cycle) => (
-          <CustomerActions
-            key={cycle?.id}
-            cycle={cycle}
-            setAllCycle={setAllCycle}
-          ></CustomerActions>
-        ))}
+        <div className="my-10">
+          <button
+            onClick={() => setPageView(true)}
+            className="cursor-pointer bg-[#B18F13] py-[15px] px-[40px] rounded-full text-white mr-[10px]"
+          >
+            Cycles List
+          </button>
+          <button
+            onClick={() => setPageView(false)}
+            className="cursor-pointer bg-[#B18F13] py-[15px] px-[40px] rounded-full text-white"
+          >
+            Customer List
+          </button>
+        </div>
+        {pageView ? <CycleList></CycleList> : <UserList></UserList>}
       </div>
     </div>
   );

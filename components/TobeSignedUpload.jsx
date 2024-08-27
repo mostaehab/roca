@@ -1,6 +1,6 @@
 "use client";
 import { FiUploadCloud, FiFileText, FiTrash } from "react-icons/fi";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { AppContext } from "@/context";
 
 const TobeSignedUpload = ({ id, fileType, name }) => {

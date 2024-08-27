@@ -3,7 +3,6 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import Link from "next/link";
 import { AppContext } from "@/context";
-import { comma } from "postcss/lib/list";
 const page = () => {
   const { onRegisterUser } = AppContext();
   const [registerUser, setRegisterUser] = useState({
@@ -27,7 +26,6 @@ const page = () => {
       .then((res) => {
         if (!res.ok) {
           return res.json().then((errorData) => {
-            // Assuming errorData.errors is an array of strings
             const errorMessage = errorData.errors
               ? errorData.errors.join(", ")
               : "An unknown error occurred";
@@ -38,7 +36,6 @@ const page = () => {
         setStatus(res.ok);
       })
       .catch((error) => {
-        // Handle network or other errors
         setErrorMessages("An unexpected error occurred");
       });
   };

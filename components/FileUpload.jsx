@@ -3,12 +3,7 @@ import { FiUploadCloud, FiFileText, FiTrash } from "react-icons/fi";
 import { useState, useRef, useEffect } from "react";
 import { AppContext } from "@/context";
 
-const FileUpload = ({
-  fileDescription,
-  setUploaded,
-  setCurrentView,
-  nextView,
-}) => {
+const FileUpload = ({ fileDescription, setUploaded }) => {
   const { currentCycle, fetchUploadFiles } = AppContext();
   const [selected, setSelected] = useState([]);
   const [data, setData] = useState(null);
@@ -51,7 +46,6 @@ const FileUpload = ({
         const data = await response.json();
         setUploaded(true);
         setFilesUplaoded(true);
-        setCurrentView(nextView);
       } catch (error) {
         console.error(error);
       } finally {

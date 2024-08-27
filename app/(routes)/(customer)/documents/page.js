@@ -7,8 +7,7 @@ import SubmitMessage from "@/components/SubmitMessage";
 import { redirect } from "next/navigation";
 import { AppContext } from "@/context";
 const page = () => {
-  const { currentCycle, fetchGetFiles, toBeSigned, setToBeSigned, signed } =
-    AppContext();
+  const { currentCycle, fetchGetFiles } = AppContext();
   const [agreed, setAgreed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [cycleFiles, setCycleFiles] = useState(null);
@@ -17,6 +16,10 @@ const page = () => {
     const authData = JSON.parse(localStorage.getItem("authData"));
     if (!authData) {
       redirect("/signin");
+    }
+
+    if (authData.user.role !== "Client") {
+      redirect("/customerlist");
     }
   }, []);
 
@@ -43,12 +46,12 @@ const page = () => {
     if (cycleFiles) {
       const filtered = cycleFiles?.filter((file) => file.fileTypeId === 2);
 
-      if (filtered[0]) {
+      if (filtered[0] || currentCycle?.[0]?.completed) {
         localStorage.setItem("cycleFilesStored", JSON.stringify(filtered));
         redirect("/filesmanagement");
       }
     }
-  }, [cycleFiles]);
+  }, [cycleFiles, currentCycle]);
 
   const agreementHandle = () => {
     setAgreed(!agreed);
